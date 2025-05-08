@@ -1,157 +1,82 @@
-# Vector Search Document Demo
+# Agentic Mainframe Modernization POC
 
-A demonstration application for document indexing and semantic search using transformer-based embeddings.
+This proof of concept demonstrates how AI agents can assist in mainframe modernization efforts through:
 
-## Overview
+1. **Code Analysis** - Understanding and documenting legacy mainframe code
+2. **Documentation Generation** - Creating comprehensive documentation from code analysis
+3. **Code Transformation** - Converting mainframe code to modern alternatives
 
-This project demonstrates how to build a simple yet powerful document search system using:
-- FastAPI for the backend API
-- Hugging Face's DistilBERT model for generating document embeddings
-- ChromaDB as a vector store for similarity search
-- A clean web interface for document upload and search
+## Setup
 
-## Features
-
-- Upload text and COBOL documents (.txt, .cbl, .cobol, .cob)
-- Generate embeddings from document content using DistilBERT
-- Store and index document embeddings in a vector database
-- Perform semantic search across indexed documents
-- Retrieve the most relevant documents for any search query
-
-## Installation
-
-### Prerequisites
-
-- Python 3.8 or higher
-- Git
-
-### Setup
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/agentic-mainframe-poc.git
-cd agentic-mainframe-poc
-```
-
-2. Make the setup script executable:
-```bash
-chmod +x setup.sh
-```
-
-3. Run the setup script to create a virtual environment and install dependencies:
-```bash
-./setup.sh
-```
-
-### Manual Setup (Alternative)
-
-If you prefer to set up manually:
-
-1. Create a virtual environment:
-```bash
-python3 -m venv venv
-```
-
-2. Activate the virtual environment:
-```bash
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Running the Application
-
-1. Activate the virtual environment (if not already activated):
-```bash
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-2. Start the application:
-```bash
-python -m uvicorn main:app --reload
-```
-
-3. Open your web browser and navigate to http://localhost:8000
+1. Clone this repository
+2. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+3. Set up your OpenAI API key:
+   ```
+   export OPENAI_API_KEY=your-api-key
+   ```
+   Or add it to `config.yaml`
 
 ## Usage
 
-### Document Upload
-1. Select a document (.txt, .cbl, .cobol) using the file picker.
-2. Click "Upload and Index" to process the document.
-3. Wait for confirmation that the document has been indexed.
+The POC provides three main capabilities:
 
-### Searching Documents
-1. Enter your search query in the text area.
-2. Specify the number of results you want to retrieve.
-3. Click "Search" to find relevant documents.
-4. View search results with relevance scores and content previews.
-
-## Project Structure
-
-- `main.py`: FastAPI application and API endpoints
-- `embeddings.py`: Embedding generation logic
-- `vector_store.py`: ChromaDB integration for vector storage and search
-- `templates/`: HTML templates for the web interface
-- `static/`: CSS, JavaScript, and other static assets
-- `requirements.txt`: Project dependencies
-- `uploads/`: Directory where uploaded documents are stored
-- `chroma_db/`: Directory where ChromaDB stores the vector index and document embeddings
-
-## Technical Details
-
-- Embeddings are generated using a deterministic hashing approach for reliability
-- ChromaDB is used for efficient similarity search with cosine distance
-- The application uses asynchronous API endpoints for better performance
-- Uploaded documents are stored in the `uploads/` directory with UUID-prefixed filenames
-- The vector index and embeddings are stored in the `chroma_db/` directory
-
-## Accessing Uploaded Documents
-
-You can find your uploaded documents in two places:
-
-1. **Original Files**: All uploaded files are stored in the `uploads/` directory with UUID-prefixed filenames for uniqueness.
-
-2. **Vector Index**: The document embeddings and metadata are stored in the `chroma_db/` directory, managed by ChromaDB.
-
-### Using the File Browser Utility
-
-This project includes a file browser utility to help you explore uploaded documents:
+### 1. Analyze Mainframe Code
 
 ```bash
-# List all uploaded files
-python file_browser.py
-
-# View the content of a specific file (by index number)
-python file_browser.py --view 1
-
-# Explore the vector store contents
-python file_browser.py --vector-store
-
-# Test search functionality from the command line
-python file_browser.py --search "your search query"
-
-# Check if a specific file is properly indexed
-python file_browser.py --test 1
+python main.py --mode analyze --source /path/to/cobol/file.cbl --output analysis_report.json
 ```
 
-### Troubleshooting "Document text not found" Messages
+This will generate an analysis report of the mainframe code, identifying key components, dependencies, and modernization considerations.
 
-If search results display "Document text not found" instead of actual document content:
-
-1. This happens because the document text wasn't properly cached in the vector store's memory.
-2. Restart the application to reload the documents from disk.
-3. For persistent document storage across restarts, you can use the file_browser.py tool to view the original documents:
+### 2. Generate Documentation
 
 ```bash
-# Find which file matches your search result
-python file_browser.py
-
-# View the full content of the document
-python file_browser.py --view INDEX_NUMBER
+python main.py --mode document --source /path/to/cobol/file.cbl --output documentation
 ```
 
-The document content is always preserved in the `uploads/` directory, even if the in-memory cache doesn't contain it.
+This will generate comprehensive documentation in Markdown and HTML formats, explaining the purpose and functionality of the code.
 
+### 3. Transform Code
+
+```bash
+python main.py --mode transform --source /path/to/cobol/file.cbl --output /path/to/output/file.java
+```
+
+This will transform the mainframe code to a modern language (default: Java), applying transformation rules and preserving business logic.
+
+## Example
+
+To try with the included example COBOL file:
+
+```bash
+# Analyze
+python main.py --mode analyze --source examples/sample.cbl --output analysis.json
+
+# Document
+python main.py --mode document --source examples/sample.cbl --output docs
+
+# Transform
+python main.py --mode transform --source examples/sample.cbl --output transformed/sample.java
+```
+
+## Architecture
+
+The POC uses a modular architecture with:
+
+- Specialized agents for different tasks
+- RAG (Retrieval-Augmented Generation) for relevant context
+- Configurable LLM backends
+- Transformation rules for common patterns
+
+## Extending the POC
+
+To extend this POC for production use, consider:
+
+1. Implementing a proper vector database for RAG
+2. Adding more specialized agents for different mainframe technologies
+3. Expanding the transformation rules for different target languages
+4. Adding integration with CI/CD pipelines
+5. Implementing feedback loops to improve agent performance

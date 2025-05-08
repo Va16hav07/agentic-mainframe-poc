@@ -1,0 +1,42 @@
+
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Documentation for sample.cbl</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
+                        h1 { color: #333; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Program Documentation</h1>
+<h2>Purpose</h2>
+<p>This program processes customer transactions against the customer master file.</p>
+<h2>Inputs</h2>
+<ul>
+<li>CUSTMAST: Customer master file</li>
+<li>TRANFILE: Transaction input file</li>
+</ul>
+<h2>Outputs</h2>
+<ul>
+<li>Updated customer master file</li>
+<li>PRNTFILE: Report of processed transactions</li>
+</ul>
+<h2>Processing Logic</h2>
+<ol>
+<li>Read transaction records</li>
+<li>For each transaction:</li>
+<li>Look up customer in master file</li>
+<li>Apply transaction based on type</li>
+<li>Update master record</li>
+<li>Generate summary report</li>
+</ol>
+<h2>Error Handling</h2>
+<p>The program includes error handling for:
+- Invalid customer numbers
+- Transaction amount limits
+- File I/O errors</p>
+                </body>
+                </html>
+                

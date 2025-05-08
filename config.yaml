@@ -1,0 +1,32 @@
+# Configuration for Agentic Mainframe Modernization POC
+
+# LLM Configuration
+llm:
+  provider: "openai"
+  model: "gpt-3.5-turbo"
+  api_key: "" # Set your API key here or use OPENAI_API_KEY env variable
+  temperature: 0.1
+  rate_limit: true
+  max_tokens: 1000
+  retry_attempts: 3
+  retry_delay: 5
+
+# Vector Database Configuration
+vector_db:
+  type: "mock" # For POC, we'll use a mock vector database
+  path: "./vector_store"
+
+# Agent Configurations
+agents:
+  analyze:
+    prompt_template: "analyze_template.txt"
+    model: "gpt-3.5-turbo"
+  
+  document:
+    prompt_template: "document_template.txt"
+    model: "gpt-3.5-turbo"
+  
+  transform:
+    prompt_template: "transform_template.txt"
+    model: "gpt-3.5-turbo"
+    rules_file: "transformation_rules.yaml"

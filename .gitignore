@@ -1,3 +1,6 @@
+# Environment variables
+.env
+
 # Python
 __pycache__/
 *.py[cod]
@@ -42,3 +45,6 @@ uploads/
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Vector store
+vector_store/

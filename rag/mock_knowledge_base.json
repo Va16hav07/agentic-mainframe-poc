@@ -1,0 +1,34 @@
+[
+  {
+    "id": "cobol-basics",
+    "content": "COBOL (Common Business-Oriented Language) is a compiled English-like computer programming language designed for business use. It is imperative, procedural and, since 2002, object-oriented. COBOL is primarily used in business, finance, and administrative systems for companies and governments.\n\nKey features of COBOL include:\n- Division structure (IDENTIFICATION, ENVIRONMENT, DATA, PROCEDURE)\n- Verbose English-like syntax\n- Record-oriented file handling\n- Strong data typing and specification\n- Support for decimal arithmetic"
+  },
+  {
+    "id": "mainframe-architecture",
+    "content": "Mainframe computers or mainframes are computers used primarily by large organizations for critical applications, bulk data processing, enterprise resource planning, and transaction processing. They are larger and have more processing power than some other classes of computers.\n\nIBM mainframes run z/OS, z/VM, z/VSE, z/TPF operating systems. Key components include:\n- CICS - Customer Information Control System for transaction management\n- IMS - Information Management System database\n- DB2 - Relational database management system\n- JCL - Job Control Language for batch processing\n- TSO - Time Sharing Option for interactive computing"
+  },
+  {
+    "id": "cobol-to-java",
+    "content": "Converting COBOL programs to Java requires understanding several key mapping patterns:\n\n1. COBOL divisions map to Java package and class structures\n2. COBOL data items map to Java variables:\n   - PIC X fields → String\n   - PIC 9 fields → int, long, BigDecimal\n   - GROUP items → Classes\n3. COBOL paragraphs map to Java methods\n4. COBOL PERFORM maps to method calls\n5. COBOL file handling maps to Java I/O streams\n6. COBOL string handling needs careful conversion\n7. COBOL numeric operations must consider precision differences\n\nCommon challenges include handling COBOL's decimal arithmetic, managing EBCDIC vs ASCII encoding, and dealing with lack of pointers in COBOL."
+  },
+  {
+    "id": "jcl-basics",
+    "content": "JCL (Job Control Language) is used to instruct the z/OS operating system on how to run batch jobs. It's a scripting language that defines the resources needed and the processing to be done.\n\nKey components of JCL:\n- JOB statement - Marks the beginning of a job and provides accounting information\n- EXEC statement - Identifies the program or procedure to be executed\n- DD statement - Defines datasets used by the program\n- PROC - Defines a procedure that can be reused\n- SET - Assigns values to symbolic parameters\n- IF/THEN/ELSE - Provides conditional processing\n- INCLUDE - Incorporates predefined JCL statements\n\nJCL is often modernized to shell scripts, Jenkins pipelines, or other workflow automation tools."
+  },
+  {
+    "id": "vsam-basics",
+    "content": "VSAM (Virtual Storage Access Method) is a file storage access method used in IBM mainframe operating systems. It provides high-performance access to data on direct access storage devices.\n\nVSAM record types:\n- KSDS (Key Sequenced Data Set) - Records are accessed by a key field\n- ESDS (Entry Sequenced Data Set) - Records are accessed by their relative position\n- RRDS (Relative Record Data Set) - Records are accessed by relative record number\n- LDS (Linear Data Set) - Byte-addressable space with no record structure\n\nIn modern systems, VSAM is typically replaced by relational databases, object storage, or NoSQL databases, depending on the access patterns required."
+  },
+  {
+    "id": "mainframe-modernization-patterns",
+    "content": "Common mainframe modernization patterns include:\n\n1. Rehosting (Lift & Shift) - Moving applications to cloud or commodity hardware with minimal changes\n2. Replatforming - Changing the underlying platform while maintaining function\n3. Refactoring - Restructuring code without changing external behavior\n4. Rearchitecting - Significantly altering the code to adopt modern architectures\n5. Rebuilding - Rewriting applications from scratch\n6. Replacing - Adopting COTS or SaaS solutions\n\nKey considerations for modernization:\n- Application portfolio assessment\n- Business criticality and value\n- Technical debt and complexity\n- Integration dependencies\n- Data considerations\n- Skills availability\n- Risk tolerance"
+  },
+  {
+    "id": "cobol-program-structure",
+    "content": "A typical COBOL program structure includes:\n\nIDENTIFICATION DIVISION.\n    PROGRAM-ID. program-name.\n\nENVIRONMENT DIVISION.\n    CONFIGURATION SECTION.\n    INPUT-OUTPUT SECTION.\n        FILE-CONTROL.\n            SELECT files...\n\nDATA DIVISION.\n    FILE SECTION.\n    FD file-descriptions...\n    WORKING-STORAGE SECTION.\n        01 variables...\n    LINKAGE SECTION.\n        01 parameters...\n\nPROCEDURE DIVISION.\n    Main program logic...\n    STOP RUN."
+  },
+  {
+    "id": "db2-to-sql",
+    "content": "When migrating DB2 database structures and SQL to modern SQL databases:\n\n1. Data Types differences:\n   - DECIMAL in DB2 maps to DECIMAL/NUMERIC\n   - CHAR/VARCHAR are similar across platforms\n   - DATE/TIME handling varies\n\n2. SQL Syntax differences:\n   - DB2's SELECT FROM table WITH UR becomes simple SELECT in many SQL dialects\n   - CURRENT DATE/TIMESTAMP functions may have different syntax\n   - JOIN syntax may need updating to ANSI SQL style\n\n3. Stored Procedures:\n   - DB2 stored procedures use different language subsets than modern SQL\n   - Parameters and return values handling differs\n\n4. Performance considerations:\n   - Index design may need rethinking\n   - Query optimization hints differ between platforms\n   - Tablespace and partitioning concepts vary"
+  }
+]

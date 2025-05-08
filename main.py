@@ -1,180 +1,57 @@
+#!/usr/bin/env python3
+
+import argparse
 import os
-import shutil
-import tempfile
-import uuid
-import traceback
-import logging
-from typing import List
-from fastapi import FastAPI, UploadFile, File, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+import sys
+from agents.agent_factory import create_agent
+from utils.config import load_config
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Import our modules
-from embeddings import EmbeddingGenerator
-from vector_store import ChromaVectorStore, CustomEmbeddingFunction
-
-# Create directories if they don't exist
-os.makedirs("./uploads", exist_ok=True)
-os.makedirs("./static", exist_ok=True)
-
-app = FastAPI(title="Document Search API")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
-
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Initialize embedding generator and vector store
-try:
-    # Create a simple embedding generator
-    embedding_generator = EmbeddingGenerator()
+def main():
+    """
+    Main entry point for the Agentic Mainframe Modernization POC.
+    """
+    parser = argparse.ArgumentParser(description='Agentic Mainframe Modernization POC')
+    parser.add_argument('--mode', choices=['analyze', 'document', 'transform'], 
+                      help='Mode of operation')
+    parser.add_argument('--source', help='Source file or directory')
+    parser.add_argument('--output', help='Output file or directory')
+    parser.add_argument('--config', default='config.yaml', help='Configuration file')
     
-    # Initialize vector store with our custom wrapper
-    vector_store = ChromaVectorStore(
-        embedding_function=embedding_generator,
-        collection_name="documents",
-        persist_directory="./chroma_db"
-    )
-    logger.info("Successfully initialized components")
-except Exception as e:
-    logger.error(f"Error initializing components: {str(e)}")
-    logger.error(traceback.format_exc())
-    raise
-
-class SearchQuery(BaseModel):
-    query: str
-    top_k: int = 5
-
-class SearchResult(BaseModel):
-    document_id: str
-    document_name: str
-    score: float
-    preview: str
-
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled exception: {str(exc)}")
-    logger.error(traceback.format_exc())
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "An internal server error occurred."}
-    )
-
-@app.post("/upload")
-async def upload_document(file: UploadFile = File(...)):
-    # Check file type - add .cob extension to supported formats
-    if not file.filename.lower().endswith(('.txt', '.cbl', '.cobol', '.cob')):
-        raise HTTPException(status_code=400, detail="Only text and COBOL files (.txt, .cbl, .cobol, .cob) are supported")
+    args = parser.parse_args()
     
-    logger.info(f"Processing upload for {file.filename}")
+    # Show help message if no arguments provided
+    if len(sys.argv) == 1 or not args.mode or not args.source:
+        print("Agentic Mainframe Modernization POC")
+        print("===================================")
+        print("\nUsage examples:")
+        print("  Analyze:   python main.py --mode analyze --source examples/sample.cbl --output analysis.json")
+        print("  Document:  python main.py --mode document --source examples/sample.cbl --output docs")
+        print("  Transform: python main.py --mode transform --source examples/sample.cbl --output transformed/sample.java")
+        print("\nFor detailed instructions, see GETTING_STARTED.md")
+        return
     
+    config = load_config(args.config)
+    
+    # Add warning about free tier usage - with safer access
+    if config.get("llm", {}).get("api_key") and config.get("llm", {}).get("rate_limit", False):
+        print("\n  NOTICE: Running with free tier OpenAI API key.")
+        print("    Expect potential rate limiting and reduced capabilities.")
+        print("    For better performance, consider using a paid API key.\n")
+    
+    # Make sure output directory exists if we're writing to a file in a new directory
+    if args.output and os.path.dirname(args.output) and not os.path.exists(os.path.dirname(args.output)):
+        os.makedirs(os.path.dirname(args.output), exist_ok=True)
+    
+    # Create and run the appropriate agent
     try:
-        # Save file to disk
-        file_path = os.path.join("uploads", f"{uuid.uuid4()}_{file.filename}")
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+        agent = create_agent(args.mode, config)
+        result = agent.process(args.source, args.output)
         
-        # Read content
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-            content = f.read()
-        
-        # Generate document ID
-        doc_id = str(uuid.uuid4())
-        
-        # Add to vector store
-        vector_store.add_document(
-            document_id=doc_id,
-            document_text=content[:50000], # Limit size
-            metadata={"filename": file.filename}
-        )
-        
-        return {"message": "Document uploaded and indexed successfully", "document_id": doc_id}
-    
+        print(f"Agent completed task. Result: {result}")
     except Exception as e:
-        logger.error(f"Upload error: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        file.file.close()
-
-@app.post("/search", response_model=List[SearchResult])
-async def search_documents(search_query: SearchQuery):
-    try:
-        results = vector_store.search(search_query.query, top_k=search_query.top_k)
-        
-        formatted_results = []
-        for doc_id, score, metadata, doc_text in results:
-            # Create preview
-            preview = doc_text[:200] + "..." if len(doc_text) > 200 else doc_text
-            
-            formatted_results.append(
-                SearchResult(
-                    document_id=doc_id,
-                    document_name=metadata.get("filename", "Unknown"),
-                    score=float(score),
-                    preview=preview
-                )
-            )
-        
-        return formatted_results
-    
-    except Exception as e:
-        logger.error(f"Search error: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/document/{doc_id}")
-async def get_document(doc_id: str):
-    """Retrieve full document content by ID."""
-    try:
-        # Try to get the document from the vector store
-        doc_info = vector_store.collection.get(ids=[doc_id])
-        
-        if doc_info and 'documents' in doc_info and doc_info['documents']:
-            content = doc_info['documents'][0]
-            return {"content": content}
-        
-        # If not found in vector store, check if there's a file path in metadata
-        metadata = {}
-        try:
-            meta_info = vector_store.collection.get(ids=[doc_id], include=["metadatas"])
-            if meta_info and 'metadatas' in meta_info and meta_info['metadatas']:
-                metadata = meta_info['metadatas'][0] or {}
-        except:
-            pass
-            
-        # Try to load from file if we have a path
-        if 'file_path' in metadata and os.path.exists(metadata['file_path']):
-            with open(metadata['file_path'], 'r', encoding='utf-8', errors='ignore') as f:
-                content = f.read()
-            return {"content": content}
-            
-        # If we still don't have the document, return an error
-        raise HTTPException(status_code=404, detail="Document not found")
-    
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        logger.error(f"Error retrieving document: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error retrieving document: {str(e)}")
+        print(f"Error running agent: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    main()

@@ -1,0 +1,6 @@
+[
+  {
+    "file": "examples/sample.cbl",
+    "analysis": "\n# Code Analysis Report\n\n## Overview\nThis appears to be a COBOL program that processes customer transactions.\n\n## Key Components\n1. DATA DIVISION - Contains file descriptions and working storage\n2. PROCEDURE DIVISION - Contains the main logic\n3. Several subroutines for processing different types of transactions\n\n## Dependencies\n- References external files: CUSTMAST, TRANFILE\n- Likely depends on CICS environment\n\n## Recommendations\n- Consider refactoring complex IF/ELSE blocks\n- Transaction processing logic could be modernized using microservices\n- Database access should be replaced with modern alternatives\n            "
+  }
+]

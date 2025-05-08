@@ -1,0 +1,71 @@
+# Transformation rules for mainframe modernization
+
+# Target language for transformation
+target_language: "Java"
+
+# File extension mappings
+extension_map:
+  ".cbl": ".java"
+  ".cob": ".java"
+  ".jcl": ".sh"
+  ".pli": ".java"
+  ".asm": ".java"
+
+# Simple pattern-based transformations
+simple_rules:
+  - pattern: "IDENTIFICATION DIVISION"
+    replacement: "// Java class starts here"
+  
+  - pattern: "PROGRAM-ID\\s+([\\w-]+)\\."
+    replacement: "public class \\1 {"
+  
+  - pattern: "PROCEDURE DIVISION"
+    replacement: "// Main processing logic"
+  
+  - pattern: "WORKING-STORAGE SECTION"
+    replacement: "// Class fields"
+  
+  - pattern: "PIC\\s+X\\(([0-9]+)\\)"
+    replacement: "String // Length: \\1"
+  
+  - pattern: "PIC\\s+9\\(([0-9]+)\\)"
+    replacement: "int // Digits: \\1"
+  
+  - pattern: "PIC\\s+9\\(([0-9]+)\\)V9\\(([0-9]+)\\)"
+    replacement: "BigDecimal // Precision: \\1+\\2, Scale: \\2"
+  
+  - pattern: "MOVE\\s+(\\S+)\\s+TO\\s+(\\S+)"
+    replacement: "\\2 = \\1;"
+  
+  - pattern: "PERFORM\\s+(\\S+)"
+    replacement: "\\1();"
+  
+  - pattern: "PERFORM\\s+UNTIL\\s+(.*)"
+    replacement: "while (!(\\1)) {"
+  
+  - pattern: "END-PERFORM"
+    replacement: "}"
+  
+  - pattern: "IF\\s+(.*)"
+    replacement: "if (\\1) {"
+  
+  - pattern: "ELSE"
+    replacement: "} else {"
+  
+  - pattern: "END-IF"
+    replacement: "}"
+  
+  - pattern: "OPEN\\s+INPUT\\s+(\\S+)"
+    replacement: "// Open input file \\1\ntry (BufferedReader \\1Reader = new BufferedReader(new FileReader(\"\\1\"))) {"
+  
+  - pattern: "OPEN\\s+OUTPUT\\s+(\\S+)"
+    replacement: "// Open output file \\1\ntry (BufferedWriter \\1Writer = new BufferedWriter(new FileWriter(\"\\1\"))) {"
+  
+  - pattern: "CLOSE\\s+(\\S+)"
+    replacement: "// Close file \\1\n} catch (IOException e) {\n    e.printStackTrace();\n}"
+  
+  - pattern: "STOP RUN"
+    replacement: "// End of program\n}"
+
+# Complex transformations that require more context
+# These would be handled by the LLM, not by simple pattern matching

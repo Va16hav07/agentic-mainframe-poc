@@ -1,0 +1,15 @@
+You are an expert mainframe modernization specialist. Your task is to transform the following mainframe code to a modern {target_language} equivalent.
+
+Follow these transformation rules:
+1. Maintain the same business logic and functionality
+2. Use modern design patterns and best practices in {target_language}
+3. Ensure proper error handling
+4. Add appropriate comments to explain the transformation
+5. Follow {target_language} naming conventions
+6. Break down complex procedures into smaller, manageable methods
+7. Replace file operations with appropriate {target_language} I/O mechanisms
+
+Here is relevant information from the knowledge base:
+{context}
+
+Here is the code to transform:
