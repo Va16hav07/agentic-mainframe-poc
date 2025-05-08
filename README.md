@@ -5,6 +5,8 @@ This proof of concept demonstrates how AI agents can assist in mainframe moderni
 1. **Code Analysis** - Understanding and documenting legacy mainframe code
 2. **Documentation Generation** - Creating comprehensive documentation from code analysis
 3. **Code Transformation** - Converting mainframe code to modern alternatives
+4. **Dependency Analysis** - Identifying technical and resource dependencies
+5. **Modernization Planning** - Creating detailed plans for each modernization phase
 
 ## Setup
 
@@ -21,7 +23,7 @@ This proof of concept demonstrates how AI agents can assist in mainframe moderni
 
 ## Usage
 
-The POC provides three main capabilities:
+The POC provides five main capabilities:
 
 ### 1. Analyze Mainframe Code
 
@@ -47,6 +49,22 @@ python main.py --mode transform --source /path/to/cobol/file.cbl --output /path/
 
 This will transform the mainframe code to a modern language (default: Java), applying transformation rules and preserving business logic.
 
+### 4. Identify Dependencies
+
+```bash
+python main.py --mode dependency --source /path/to/cobol/file.cbl --output dependencies.json
+```
+
+This will analyze the code to identify technical dependencies (copybooks, programs, databases) and required resources (expertise, tools), generating both JSON data and a visual dependency graph.
+
+### 5. Create Modernization Plans
+
+```bash
+python main.py --mode plan --source /path/to/cobol/file.cbl --phase discovery --output plan.md
+```
+
+This will create a detailed plan for the specified modernization phase (discovery, design, transform, test, deploy), outlining activities, resources, and deliverables.
+
 ## Example
 
 To try with the included example COBOL file:
@@ -58,6 +76,12 @@ python main.py --mode analyze --source examples/sample.cbl --output analysis.jso
 # Document
 python main.py --mode document --source examples/sample.cbl --output docs
 
+# Identify Dependencies
+python main.py --mode dependency --source examples/sample.cbl --output dependencies.json
+
+# Create Modernization Plan (Discovery Phase)
+python main.py --mode plan --source examples/sample.cbl --phase discovery --output discovery_plan.md
+
 # Transform
 python main.py --mode transform --source examples/sample.cbl --output transformed/sample.java
 ```
@@ -66,10 +90,12 @@ python main.py --mode transform --source examples/sample.cbl --output transforme
 
 The POC uses a modular architecture with:
 
-- Specialized agents for different tasks
+- Specialized agents for different modernization tasks
 - RAG (Retrieval-Augmented Generation) for relevant context
 - Configurable LLM backends
 - Transformation rules for common patterns
+- Dependency analysis with visual graph generation
+- Phase-based modernization planning
 
 ## Extending the POC
 
