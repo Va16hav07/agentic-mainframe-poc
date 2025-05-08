@@ -52,6 +52,41 @@
             margin-bottom: 10px;
             background-color: #f9f9f9;
         }
+        .result-metadata {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .doc-id {
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .result-content {
+            margin: 10px 0;
+        }
+        .view-full-btn {
+            background-color: #3498db;
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+        .search-info {
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .explanation-card {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        code {
+            background: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
         .spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
@@ -79,8 +114,8 @@
             <h2>Upload Documents</h2>
             <form id="upload-form">
                 <div>
-                    <label for="document">Select a document (.txt, .cbl, .cobol):</label>
-                    <input type="file" id="document" name="file" accept=".txt,.cbl,.cobol" required>
+                    <label for="document">Select a document (.txt, .cbl, .cobol, .cob):</label>
+                    <input type="file" id="document" name="file" accept=".txt,.cbl,.cobol,.cob" required>
                 </div>
                 <button type="submit">
                     Upload and Index
@@ -180,17 +215,39 @@
                 
                 if (response.ok) {
                     if (results.length > 0) {
-                        let resultsHtml = '<h3>Search Results:</h3>';
+                        let resultsHtml = `
+                            <h3>Search Results:</h3>
+                            <p class="search-info">Found ${results.length} document(s) matching your query. 
+                            <a href="/static/visualize.html" target="_blank">View vector visualization</a></p>
+                        `;
                         
                         results.forEach((result, index) => {
                             resultsHtml += `
                                 <div class="result-item">
                                     <h4>${index + 1}. ${result.document_name}</h4>
-                                    <p><strong>Score:</strong> ${result.score.toFixed(4)}</p>
-                                    <p><strong>Preview:</strong> ${result.preview}</p>
+                                    <div class="result-metadata">
+                                        <p><strong>Score:</strong> ${result.score.toFixed(4)}</p>
+                                        <p><strong>Document ID:</strong> <span class="doc-id">${result.document_id}</span></p>
+                                    </div>
+                                    <div class="result-content">
+                                        <p><strong>Preview:</strong> ${result.preview}</p>
+                                    </div>
+                                    <button class="view-full-btn" onclick="viewFullDocument('${result.document_id}')">View Full Document</button>
                                 </div>
                             `;
                         });
+                        
+                        // Add an explanation section
+                        resultsHtml += `
+                            <div class="explanation-card">
+                                <h4>How Vector Search Works</h4>
+                                <p>Your query was converted to a ${results.length > 0 ? '768' : '0'}-dimensional vector and compared 
+                                against all document vectors using cosine similarity.</p>
+                                <p>Documents with vectors that are closest to your query vector are shown as results.</p>
+                                <p>You can use the vector explorer tool to visualize these relationships:</p>
+                                <code>python vector_explorer.py --visualize documents</code>
+                            </div>
+                        `;
                         
                         resultsContainer.innerHTML = resultsHtml;
                     } else {
@@ -205,6 +262,21 @@
                 spinner.classList.add('hidden');
             }
         });
+        
+        // Function to view the full document
+        async function viewFullDocument(docId) {
+            try {
+                const response = await fetch(`/document/${docId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Full document content:\n\n${data.content}`);
+                } else {
+                    alert('Error fetching document');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
     </script>
 </body>
 </html>

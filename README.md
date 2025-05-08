@@ -12,7 +12,7 @@ This project demonstrates how to build a simple yet powerful document search sys
 
 ## Features
 
-- Upload text and COBOL documents (.txt, .cbl, .cobol)
+- Upload text and COBOL documents (.txt, .cbl, .cobol, .cob)
 - Generate embeddings from document content using DistilBERT
 - Store and index document embeddings in a vector database
 - Perform semantic search across indexed documents
@@ -92,18 +92,66 @@ python -m uvicorn main:app --reload
 ## Project Structure
 
 - `main.py`: FastAPI application and API endpoints
-- `embeddings.py`: DistilBERT embedding generation logic
+- `embeddings.py`: Embedding generation logic
 - `vector_store.py`: ChromaDB integration for vector storage and search
 - `templates/`: HTML templates for the web interface
 - `static/`: CSS, JavaScript, and other static assets
 - `requirements.txt`: Project dependencies
+- `uploads/`: Directory where uploaded documents are stored
+- `chroma_db/`: Directory where ChromaDB stores the vector index and document embeddings
 
 ## Technical Details
 
-- Embeddings are generated using DistilBERT's [CLS] token representation
+- Embeddings are generated using a deterministic hashing approach for reliability
 - ChromaDB is used for efficient similarity search with cosine distance
 - The application uses asynchronous API endpoints for better performance
+- Uploaded documents are stored in the `uploads/` directory with UUID-prefixed filenames
+- The vector index and embeddings are stored in the `chroma_db/` directory
 
-## License
+## Accessing Uploaded Documents
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+You can find your uploaded documents in two places:
+
+1. **Original Files**: All uploaded files are stored in the `uploads/` directory with UUID-prefixed filenames for uniqueness.
+
+2. **Vector Index**: The document embeddings and metadata are stored in the `chroma_db/` directory, managed by ChromaDB.
+
+### Using the File Browser Utility
+
+This project includes a file browser utility to help you explore uploaded documents:
+
+```bash
+# List all uploaded files
+python file_browser.py
+
+# View the content of a specific file (by index number)
+python file_browser.py --view 1
+
+# Explore the vector store contents
+python file_browser.py --vector-store
+
+# Test search functionality from the command line
+python file_browser.py --search "your search query"
+
+# Check if a specific file is properly indexed
+python file_browser.py --test 1
+```
+
+### Troubleshooting "Document text not found" Messages
+
+If search results display "Document text not found" instead of actual document content:
+
+1. This happens because the document text wasn't properly cached in the vector store's memory.
+2. Restart the application to reload the documents from disk.
+3. For persistent document storage across restarts, you can use the file_browser.py tool to view the original documents:
+
+```bash
+# Find which file matches your search result
+python file_browser.py
+
+# View the full content of the document
+python file_browser.py --view INDEX_NUMBER
+```
+
+The document content is always preserved in the `uploads/` directory, even if the in-memory cache doesn't contain it.
+

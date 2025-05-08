@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Space Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .visualization-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .visualization-container img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .explanation {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .code-section {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 20px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vector Space Visualization</h1>
+    
+    <div class="explanation">
+        <h3>Understanding Vector Embeddings</h3>
+        <p>
+            This visualization shows how your documents are positioned in the vector space. 
+            Documents with similar content appear closer together in this space.
+        </p>
+        <p>
+            When you search, your query is converted to a vector and the system finds the document 
+            vectors that are closest to it.
+        </p>
+    </div>
+
+    <div class="explanation" style="margin-top: 30px;">
+        <h3>Document Collection Overview</h3>
+        <p>
+            This system uses vector embeddings to represent documents and compare their similarity.
+            Each document is converted to a high-dimensional vector (768 dimensions) that represents its semantic meaning.
+        </p>
+        <p>
+            When searching, your query is converted to a vector and compared against all document vectors to find the most similar matches.
+        </p>
+    </div>
+
+    <div class="code-section" id="document-info">
+        <h3>Uploaded Documents</h3>
+        <p>You can view information about your uploaded documents with:</p>
+        <pre>python file_browser.py</pre>
+        <p>And search documents from the command line with:</p>
+        <pre>python file_browser.py --search "your search query"</pre>
+    </div>
+
+    <a href="/" class="back-link">← Back to search</a>
+</body>
+</html>

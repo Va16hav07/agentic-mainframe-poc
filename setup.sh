@@ -10,6 +10,14 @@ python3 -m venv venv
 echo "Activating virtual environment..."
 source venv/bin/activate
 
+# Ensure pip is up to date
+echo "Upgrading pip..."
+pip install --upgrade pip
+
+# Install numpy explicitly first to ensure version compatibility
+echo "Installing numpy..."
+pip install numpy==1.24.3
+
 # Install dependencies
 echo "Installing dependencies..."
 pip install -r requirements.txt
